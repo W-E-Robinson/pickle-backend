@@ -30,7 +30,7 @@ ORDER BY 1 DESC;
 
 -- GET /savedDishes/{userId}
 -- DONE
-select
+SELECT
 	sub.dishId,
 	d.title,
     d.picture,
@@ -49,7 +49,7 @@ FROM
 ) AS sub
 INNER JOIN dishes d ON sub.dishId = d.dishid
 INNER JOIN users u ON d.userId = u.userId
-ORDER BY 1 desc;
+ORDER BY 1 DESC;
 
 -- PATCH /savedDishes body={ dishId: number, action: "removal" | "addition" }
 -- TO DO
