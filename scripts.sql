@@ -1,6 +1,7 @@
 -- GET /lists/{userId}
 -- DONE
 SELECT
+    i.ingredientId,
 	i.name,
 	subQuery.quantity,
 	i.unit
@@ -36,7 +37,24 @@ INNER JOIN users u ON d.userId = u.userId
 ORDER BY 1 DESC;
 
 -- GET /dishes?cuisine=___&diet=___&time=___
--- TO DO
+-- DONE
+SELECT
+    d.dishId,
+    d.title,
+    d.picture,
+    d.cuisines,
+    d.dietRestrictions,
+    d.time,
+    u.name,
+    u.location,
+    u.picture
+FROM dishes d
+INNER JOIN users u ON d.userId = u.userId
+where d.time < 150
+and array_to_string(d.cuisines, '') like '%American%'
+and array_to_string(d.dietrestrictions, '') not like '%Vegan%'
+--multiple choices though? -- do in js portion in backend?
+ORDER BY 1 DESC;
 
 -- GET /savedDishes/{userId}
 -- DONE
