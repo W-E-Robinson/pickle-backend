@@ -1,10 +1,20 @@
 -- GET /lists/{userId}
--- TO DO
+-- DONE
 SELECT
-    l.listId,
-    l.list
-FROM lists l
-WHERE l.listId = {listId};
+	i.name,
+	subQuery.quantity,
+	i.unit
+FROM
+ingredients i
+INNER JOIN
+(
+	SELECT
+	    unnest(l.list)::JSON->>'itemId' AS itemId,
+	    unnest(l.list)::JSON->'quantity' AS quantity
+	FROM lists l
+	WHERE l.listId = {userId}
+) AS subQuery
+ON i.ingredientId::TEXT = subQuery.itemId;
 
 -- PUT /lists body={ itemId: number, ingredient: string, quantity: number, completed: boolean }[]
 -- TO DO
