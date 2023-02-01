@@ -17,8 +17,11 @@ INNER JOIN
 ) AS subQuery
 ON i.ingredientId::TEXT = subQuery.itemId;
 
--- PUT /lists body={ itemId: number, ingredient: string, quantity: number, completed: boolean }[]
--- TO DO
+-- PUT /lists body={ ingredientId: number, quantity: number, completed: boolean }[]
+-- DONE
+UPDATE lists
+SET list = ARRAY['{"ingredientId": 2, "quantity": 9999, "completed": true}', '{"ingredientId": 1, "quantity": 6, "completed": false}']::JSON[]
+WHERE listId = 1;
 
 -- GET /dishes
 -- DONE
@@ -79,8 +82,11 @@ INNER JOIN dishes d ON sub.dishId = d.dishid
 INNER JOIN users u ON d.userId = u.userId
 ORDER BY 1 DESC;
 
--- PATCH /savedDishes body={ dishId: number, action: "removal" | "addition" }
--- TO DO
+-- PUT /savedDishes body={ dishId: number, action: "removal" | "addition" } = same as other PUT incase deletion
+-- DONE
+UPDATE users
+SET savedDishes = '{1,2,4,100}'
+WHERE userid = 1;
 
 -- GET /searchFilters?filter=cuisines
 -- DONE
