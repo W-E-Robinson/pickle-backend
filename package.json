@@ -1,0 +1,30 @@
+{
+    "name": "pickle-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "ts-node-dev --respawn ./src/index.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/W-E-Robinson/pickle-backend.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/W-E-Robinson/pickle-backend/issues"
+    },
+    "homepage": "https://github.com/W-E-Robinson/pickle-backend#readme",
+    "devDependencies": {
+        "@types/express": "^4.17.17",
+        "@types/node": "^18.11.19",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^4.9.5"
+    },
+    "dependencies": {
+        "express": "^4.18.2"
+    }
+}
