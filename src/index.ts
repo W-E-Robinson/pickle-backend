@@ -1,33 +1,19 @@
 import express, { Request, Response, Application } from 'express';
+import cors from "cors";
+
+import { getList } from './endpoints';
 
 const app: Application = express();
 
-const PORT = 8080;
+app.use(cors<Request>())
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-app.get("/lists/:userId", (request: Request, response: Response): void => {
-    response.send(`GET /lists/${request.params.userId} called`);
-});
+const PORT = process.env.BACKEND_PORT;
 
-app.put("/lists", (request: Request, response: Response): void => {
-    response.send(`PUT /lists called with body: ${request.body}`);
-});
-
-app.get("/dishes", (request: Request, response: Response): void => {
-    response.send(`GET /dishes called with queries: ${request.query}`);
-});
-
-app.get("/savedDishes/:userId", (request: Request, response: Response): void => {
-    response.send(`GET /savedDishes/${request.params.userId}`);
-});
-
-app.put("/savedDishes", (request: Request, response: Response): void => {
-    response.send(`PUT /savedDishes called with body: ${request.body}`);
-});
-
-app.get("/searchFilters", (request: Request, response: Response): void => {
-    response.send(`GET /searchFilters called with queries: ${request.query}`);
-});
+app.get("/lists/:userId", getList);
 
 app.listen(PORT, (): void => {
     console.log(`Server running on port: ${PORT}`);
 });
+
