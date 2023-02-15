@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Pool } from "pg";
+import { Pool, PoolConfig } from "pg";
 
 const getLocalDBConnectionDetails = () => {
     return {
