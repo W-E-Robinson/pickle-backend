@@ -1,5 +1,8 @@
-import express, { Request, Response, Application } from 'express';
+import express, { Request, Application } from 'express';
 import cors from "cors";
+
+import dotenv from 'dotenv';
+dotenv.config()
 
 import { getList } from './endpoints';
 
