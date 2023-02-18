@@ -24,7 +24,7 @@ export const getList = async (request: Request, response: Response) => {
 
     pool.query(`
         SELECT
-            i.ingredientId,
+            i.ingredientId AS "ingredientId",
             i.name,
             subQuery.quantity,
             i.unit,
@@ -62,11 +62,11 @@ export const getList = async (request: Request, response: Response) => {
 export const getDishes = async (request: Request, response: Response) => {
     pool.query(`
         SELECT
-            d.dishId,
+            d.dishId AS "dishId",
             d.title,
             d.picture,
             d.cuisines,
-            d.dietRestrictions,
+            d.dietRestrictions AS "dietRestrictions",
             d.time,
             u.name,
             u.location,
@@ -87,9 +87,42 @@ export const getDishes = async (request: Request, response: Response) => {
     );
 };
 
-//app.get("/savedDishes/:userId", (request: Request, response: Response): void => {
-//    response.send(`GET /savedDishes/${request.params.userId}`);
-//});
+export const getSavedDishes = async (request: Request, response: Response) => {
+    const userId = request.params.userId;
+
+    pool.query(`
+        SELECT
+        	sub.dishId AS "dishId",
+        	d.title,
+            d.picture,
+            d.cuisines,
+            d.dietRestrictions AS "dietRestrictions",
+            d.time,
+            u.name,
+            u.location,
+            u.picture
+        FROM
+        (
+        	SELECT
+        	   	unnest(u.savedDishes) AS dishId
+        	FROM users u
+        	WHERE u.userid = $1
+        ) AS sub
+        INNER JOIN dishes d ON sub.dishId = d.dishid
+        INNER JOIN users u ON d.userId = u.userId
+        ORDER BY 1 DESC;
+    `, [userId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error("getSavedDishes", queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log("getSavedDishes", results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
 
 //app.put("/savedDishes", (request: Request, response: Response): void => {
 //    response.send(`PUT /savedDishes called with body: ${request.body}`);

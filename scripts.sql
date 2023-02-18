@@ -4,22 +4,6 @@ UPDATE lists
 SET list = ARRAY['{"ingredientId": 2, "quantity": 9999, "completed": true}', '{"ingredientId": 1, "quantity": 6, "completed": false}']::JSON[]
 WHERE listId = 1;
 
--- GET /dishes
--- DONE
-SELECT
-    d.dishId,
-    d.title,
-    d.picture,
-    d.cuisines,
-    d.dietRestrictions,
-    d.time,
-    u.name,
-    u.location,
-    u.picture
-FROM dishes d
-INNER JOIN users u ON d.userId = u.userId
-ORDER BY 1 DESC;
-
 -- GET /dishes?cuisine=___&diet=___&time=___
 -- DONE
 SELECT
