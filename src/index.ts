@@ -1,13 +1,12 @@
-import express, { Request, Application } from 'express';
+import express, { Request, Application } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 
-import dotenv from 'dotenv';
-dotenv.config()
-
-import { getList } from './endpoints';
+import { getList } from "./endpoints";
 
 const app: Application = express();
 
+dotenv.config()
 app.use(cors<Request>())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
