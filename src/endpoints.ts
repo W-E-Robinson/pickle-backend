@@ -58,19 +58,43 @@ export const getList = async (request: Request, response: Response) => {
 //app.put("/lists", (request: Request, response: Response): void => {
 //    response.send(`PUT /lists called with body: ${request.body}`);
 //});
-//
-//app.get("/dishes", (request: Request, response: Response): void => {
-//    response.send(`GET /dishes called with queries: ${request.query}`);
-//});
-//
+
+export const getDishes = async (request: Request, response: Response) => {
+    pool.query(`
+        SELECT
+            d.dishId,
+            d.title,
+            d.picture,
+            d.cuisines,
+            d.dietRestrictions,
+            d.time,
+            u.name,
+            u.location,
+            u.picture
+        FROM dishes d
+        INNER JOIN users u ON d.userId = u.userId
+        ORDER BY 1 DESC;
+    `,
+        (queryError, results) => {
+            if (queryError) {
+                console.error("getDishes", queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log("getDishes", results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
+
 //app.get("/savedDishes/:userId", (request: Request, response: Response): void => {
 //    response.send(`GET /savedDishes/${request.params.userId}`);
 //});
-//
+
 //app.put("/savedDishes", (request: Request, response: Response): void => {
 //    response.send(`PUT /savedDishes called with body: ${request.body}`);
 //});
-//
+
 //app.get("/searchFilters", (request: Request, response: Response): void => {
 //    response.send(`GET /searchFilters called with queries: ${request.query}`);
 //});
