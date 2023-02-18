@@ -24,7 +24,7 @@ export const getList = async (request: Request, response: Response) => {
 
     pool.query(`
         SELECT
-            i.ingredientId,
+            i.ingredientId AS "ingredientId",
             i.name,
             subQuery.quantity,
             i.unit,
@@ -55,22 +55,97 @@ export const getList = async (request: Request, response: Response) => {
     );
 };
 
-//app.put("/lists", (request: Request, response: Response): void => {
-//    response.send(`PUT /lists called with body: ${request.body}`);
-//});
-//
-//app.get("/dishes", (request: Request, response: Response): void => {
-//    response.send(`GET /dishes called with queries: ${request.query}`);
-//});
-//
-//app.get("/savedDishes/:userId", (request: Request, response: Response): void => {
-//    response.send(`GET /savedDishes/${request.params.userId}`);
-//});
-//
-//app.put("/savedDishes", (request: Request, response: Response): void => {
-//    response.send(`PUT /savedDishes called with body: ${request.body}`);
-//});
-//
-//app.get("/searchFilters", (request: Request, response: Response): void => {
-//    response.send(`GET /searchFilters called with queries: ${request.query}`);
-//});
+export const getDishes = async (request: Request, response: Response) => {
+    pool.query(`
+        SELECT
+            d.dishId AS "dishId",
+            d.title,
+            d.picture,
+            d.cuisines,
+            d.dietRestrictions AS "dietRestrictions",
+            d.time,
+            u.name,
+            u.location,
+            u.picture
+        FROM dishes d
+        INNER JOIN users u ON d.userId = u.userId
+        ORDER BY 1 DESC;
+    `,
+        (queryError, results) => {
+            if (queryError) {
+                console.error("getDishes", queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log("getDishes", results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
+
+export const getSavedDishes = async (request: Request, response: Response) => {
+    const userId = request.params.userId;
+
+    pool.query(`
+        SELECT
+        	sub.dishId AS "dishId",
+        	d.title,
+            d.picture,
+            d.cuisines,
+            d.dietRestrictions AS "dietRestrictions",
+            d.time,
+            u.name,
+            u.location,
+            u.picture
+        FROM
+        (
+        	SELECT
+        	   	unnest(u.savedDishes) AS dishId
+        	FROM users u
+        	WHERE u.userid = $1
+        ) AS sub
+        INNER JOIN dishes d ON sub.dishId = d.dishid
+        INNER JOIN users u ON d.userId = u.userId
+        ORDER BY 1 DESC;
+    `, [userId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error(`getSavedDishes, userId: ${userId}`, queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log(`getSavedDishes, userId: ${userId}`, results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
+
+export const getSearchFilters = async (request: Request, response: Response) => {
+    const filter = request.query.filter;
+
+    const getQuery = () => {
+        if (filter === "dietRestrictions") {
+            return `SELECT
+                DISTINCT UNNEST(d.dietRestrictions) AS "dietRestriction"
+                FROM dishes d
+                ORDER BY 1 ASC;`
+        } else if (filter === "cuisines") {
+            return `SELECT
+                DISTINCT UNNEST(d.cuisines) AS "cuisine"
+                FROM dishes d
+                ORDER BY 1 ASC;`
+        }
+    };
+
+    pool.query(getQuery(),
+        (queryError, results) => {
+            if (queryError) {
+                console.error("getSearchFilters", queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log("getSearchFilters", results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
