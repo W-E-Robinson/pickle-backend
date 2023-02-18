@@ -55,10 +55,6 @@ export const getList = async (request: Request, response: Response) => {
     );
 };
 
-//app.put("/lists", (request: Request, response: Response): void => {
-//    response.send(`PUT /lists called with body: ${request.body}`);
-//});
-
 export const getDishes = async (request: Request, response: Response) => {
     pool.query(`
         SELECT
@@ -114,20 +110,42 @@ export const getSavedDishes = async (request: Request, response: Response) => {
     `, [userId],
         (queryError, results) => {
             if (queryError) {
-                console.error("getSavedDishes", queryError);
+                console.error(`getSavedDishes, userId: ${userId}`, queryError);
                 response.status(500).json({ message: "500 Internal Server Error." });
             } else {
-                console.log("getSavedDishes", results);
+                console.log(`getSavedDishes, userId: ${userId}`, results);
                 response.status(200).json({ message: "Completed Successfully.", data: results.rows });
             }
         },
     );
 };
 
-//app.put("/savedDishes", (request: Request, response: Response): void => {
-//    response.send(`PUT /savedDishes called with body: ${request.body}`);
-//});
+export const getSearchFilters = async (request: Request, response: Response) => {
+    const filter = request.query.filter;
 
-//app.get("/searchFilters", (request: Request, response: Response): void => {
-//    response.send(`GET /searchFilters called with queries: ${request.query}`);
-//});
+    const getQuery = () => {
+        if (filter === "dietRestrictions") {
+            return `SELECT
+                DISTINCT UNNEST(d.dietRestrictions) AS "dietRestriction"
+                FROM dishes d
+                ORDER BY 1 ASC;`
+        } else if (filter === "cuisines") {
+            return `SELECT
+                DISTINCT UNNEST(d.cuisines) AS "cuisine"
+                FROM dishes d
+                ORDER BY 1 ASC;`
+        }
+    };
+
+    pool.query(getQuery(),
+        (queryError, results) => {
+            if (queryError) {
+                console.error("getSearchFilters", queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log("getSearchFilters", results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
