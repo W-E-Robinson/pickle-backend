@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "ts-node-dev --respawn ./src/index.ts",
-        "dev-no-check": "npx ts-node -T ./src/index.ts"
+        "dev-no-check": "npx ts-node -T ./src/index.ts",
+        "docker-dev-no-check": "npx ts-node -T ./index.ts"
     },
     "repository": {
         "type": "git",
