@@ -56,6 +56,10 @@ export const getList = async (request: Request, response: Response) => {
 };
 
 export const getDishes = async (request: Request, response: Response) => {
+    const time = request.query.time ?? null;
+    const cuisines = request.query.cuisines ?? null;
+    const dietRestrictions = request.query.dietRestrictions ?? null;
+
     pool.query(`
         SELECT
             d.dishId AS "dishId",
@@ -69,8 +73,11 @@ export const getDishes = async (request: Request, response: Response) => {
             u.picture
         FROM dishes d
         INNER JOIN users u ON d.userId = u.userId
+        WHERE $1::integer IS NULL OR d.time < $1
+        AND $2::text IS NULL OR ARRAY_TO_STRING(d.cuisines, '') LIKE $2::text
+        AND $3::text IS NULL OR ARRAY_TO_STRING(d.dietRestrictions, '') NOT LIKE $3::text
         ORDER BY 1 DESC;
-    `,
+    `, [time, cuisines, dietRestrictions],//what of multiple cuisines/dietRestrictions?
         (queryError, results) => {
             if (queryError) {
                 console.error("getDishes", queryError);
