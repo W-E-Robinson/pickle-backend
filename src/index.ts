@@ -4,8 +4,10 @@ import dotenv from "dotenv";
 
 import {
     getList,
+    putList,
     getDishes,
     getSavedDishes,
+    putSavedDishes,
     getSearchFilters,
 } from "./endpoints";
 
@@ -19,12 +21,10 @@ app.use(express.json());
 const PORT = process.env.BACKEND_PORT;
 
 app.get("/lists/:userId", getList);
-//PUT /lists body={ ingredientId: number, quantity: number, completed: boolean }[]
+app.put("/lists/:userId", putList);
 app.get("/dishes", getDishes);
-//GET /dishes?cuisine=___&diet=___&time=___
 app.get("/savedDishes/:userId", getSavedDishes);
-//PUT /savedDishes body={ dishId: number, action: "removal" | "addition" } = same as other PUT incase deletion
-//GET /searchFilters?filter=cuisines
+app.put("/savedDishes/:userId", putSavedDishes);
 app.get("/searchFilters", getSearchFilters);
 
 app.listen(PORT, (): void => {

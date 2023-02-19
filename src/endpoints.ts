@@ -55,7 +55,45 @@ export const getList = async (request: Request, response: Response) => {
     );
 };
 
+export const putList = async (request: Request, response: Response) => {
+    const userId = request.params.userId;
+    const data = request.body.list;
+    //{
+    //    "list": [
+    //        {
+    //            "ingredientId": 10,
+    //            "quantity": 900,
+    //            "completed": false
+    //        },
+    //        {
+    //            "ingredientId": 9,
+    //            "quantity": 800,
+    //            "completed": true
+    //        }
+    //    ]
+    //}
+    pool.query(`
+        UPDATE lists
+        SET list = $1
+        WHERE listId = $2;
+    `, [data, userId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error(`putList, userId: ${userId}`, queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log(`putList, userId: ${userId}`, results);
+                response.status(200).json({ message: "Completed Successfully." });
+            }
+        },
+    );
+};
+
 export const getDishes = async (request: Request, response: Response) => {
+    const time = request.query.time ?? null;
+    const cuisines = request.query.cuisines ?? null;
+    const dietRestrictions = request.query.dietRestrictions ?? null;
+
     pool.query(`
         SELECT
             d.dishId AS "dishId",
@@ -69,8 +107,14 @@ export const getDishes = async (request: Request, response: Response) => {
             u.picture
         FROM dishes d
         INNER JOIN users u ON d.userId = u.userId
+        WHERE ($1::INTEGER IS NULL OR d.time <= $1)
+        AND ($2::TEXT IS NULL OR ARRAY_TO_STRING(d.cuisines, '') LIKE $2::TEXT)
+        AND ($3::TEXT IS NULL OR ARRAY_TO_STRING(d.dietRestrictions, '') NOT LIKE $3::TEXT)
         ORDER BY 1 DESC;
-    `,
+    `, [time, cuisines, dietRestrictions],
+    //NOTE: why does $3 work when LIKE instead of NOT LIKE?
+    //NOTE: what of multiple cuisines/dietRestrictions?
+    //NOTE: wildcard needed?
         (queryError, results) => {
             if (queryError) {
                 console.error("getDishes", queryError);
@@ -115,6 +159,29 @@ export const getSavedDishes = async (request: Request, response: Response) => {
             } else {
                 console.log(`getSavedDishes, userId: ${userId}`, results);
                 response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
+
+export const putSavedDishes = async (request: Request, response: Response) => {
+    const userId = request.params.userId;
+    const data = request.body.savedDishes;
+    //{
+    //    "savedDishes": [1]
+    //}
+    pool.query(`
+        UPDATE users
+        SET savedDishes = $1
+        WHERE listId = $2;
+    `, [data, userId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error(`putSavedDishes, userId: ${userId}`, queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log(`putSavedDishes, userId: ${userId}`, results);
+                response.status(200).json({ message: "Completed Successfully." });
             }
         },
     );
