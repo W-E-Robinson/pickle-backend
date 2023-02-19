@@ -55,11 +55,39 @@ export const getList = async (request: Request, response: Response) => {
     );
 };
 
-//-- PUT /lists/:userId body={ ingredientId: number, quantity: number, completed: boolean }[]
-//-- DONE
-//UPDATE lists
-//SET list = ARRAY['{"ingredientId": 2, "quantity": 9999, "completed": true}', '{"ingredientId": 1, "quantity": 6, "completed": false}']::JSON[]
-//WHERE listId = 1;
+export const putList = async (request: Request, response: Response) => {
+    const userId = request.params.userId;
+    const data = request.body.list;
+    //{
+    //    "list": [
+    //        {
+    //            "ingredientId": 10,
+    //            "quantity": 900,
+    //            "completed": false
+    //        },
+    //        {
+    //            "ingredientId": 9,
+    //            "quantity": 800,
+    //            "completed": true
+    //        }
+    //    ]
+    //}
+    pool.query(`
+        UPDATE lists
+        SET list = $1
+        WHERE listId = $2;
+    `, [data, userId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error(`putList, userId: ${userId}`, queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log(`putList, userId: ${userId}`, results);
+                response.status(200).json({ message: "Completed Successfully." });
+            }
+        },
+    );
+};
 
 export const getDishes = async (request: Request, response: Response) => {
     const time = request.query.time ?? null;
@@ -149,10 +177,10 @@ export const putSavedDishes = async (request: Request, response: Response) => {
     `, [data, userId],
         (queryError, results) => {
             if (queryError) {
-                console.error(`getSavedDishes, userId: ${userId}`, queryError);
+                console.error(`putSavedDishes, userId: ${userId}`, queryError);
                 response.status(500).json({ message: "500 Internal Server Error." });
             } else {
-                console.log(`getSavedDishes, userId: ${userId}`, results);
+                console.log(`putSavedDishes, userId: ${userId}`, results);
                 response.status(200).json({ message: "Completed Successfully." });
             }
         },

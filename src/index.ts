@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 import {
     getList,
-    //putList,
+    putList,
     getDishes,
     getSavedDishes,
     putSavedDishes,
@@ -21,7 +21,7 @@ app.use(express.json());
 const PORT = process.env.BACKEND_PORT;
 
 app.get("/lists/:userId", getList);
-//app.put("/lists/:userId", putList);
+app.put("/lists/:userId", putList);
 app.get("/dishes", getDishes);
 app.get("/savedDishes/:userId", getSavedDishes);
 app.put("/savedDishes/:userId", putSavedDishes);
