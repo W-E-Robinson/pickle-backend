@@ -54,6 +54,7 @@ export const getList = async (request: Request, response: Response) => {
         },
     );
 };
+
 //-- PUT /lists/:userId body={ ingredientId: number, quantity: number, completed: boolean }[]
 //-- DONE
 //UPDATE lists
@@ -135,10 +136,29 @@ export const getSavedDishes = async (request: Request, response: Response) => {
     );
 };
 
-//-- PUT /savedDishes/:userId body={ dishId: number, action: "removal" | "addition" } = same as other PUT incase deletion
-//-- DONE
-//UPDATE users
-//SET savedDishes = '{1,2,4,100}'
+export const putSavedDishes = async (request: Request, response: Response) => {
+    const userId = request.params.userId;
+    const data = request.body.savedDishes;
+    //{
+    //    "savedDishes": [1]
+    //}
+    pool.query(`
+        UPDATE users
+        SET savedDishes = $1
+        WHERE listId = $2;
+    `, [data, userId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error(`getSavedDishes, userId: ${userId}`, queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log(`getSavedDishes, userId: ${userId}`, results);
+                response.status(200).json({ message: "Completed Successfully." });
+            }
+        },
+    );
+};
+
 export const getSearchFilters = async (request: Request, response: Response) => {
     const filter = request.query.filter;
 
