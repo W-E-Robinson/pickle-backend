@@ -73,11 +73,13 @@ export const getDishes = async (request: Request, response: Response) => {
             u.picture
         FROM dishes d
         INNER JOIN users u ON d.userId = u.userId
-        WHERE $1::integer IS NULL OR d.time < $1
-        AND $2::text IS NULL OR ARRAY_TO_STRING(d.cuisines, '') LIKE $2::text
-        AND $3::text IS NULL OR ARRAY_TO_STRING(d.dietRestrictions, '') NOT LIKE $3::text
+        WHERE ($1::integer IS NULL OR d.time <= $1)
+        AND ($2::text IS NULL OR ARRAY_TO_STRING(d.cuisines, '') LIKE $2::text)
+        AND ($3::text IS NULL OR ARRAY_TO_STRING(d.dietRestrictions, '') LIKE $3::text)
         ORDER BY 1 DESC;
-    `, [time, cuisines, dietRestrictions],//what of multiple cuisines/dietRestrictions?
+    `, [time, cuisines, dietRestrictions],
+    //NOTE: why does $3 work when LIKE instead of NOT LIKE?
+    //NOTE: what of multiple cuisines/dietRestrictions?
         (queryError, results) => {
             if (queryError) {
                 console.error("getDishes", queryError);
