@@ -54,6 +54,11 @@ export const getList = async (request: Request, response: Response) => {
         },
     );
 };
+//-- PUT /lists/:userId body={ ingredientId: number, quantity: number, completed: boolean }[]
+//-- DONE
+//UPDATE lists
+//SET list = ARRAY['{"ingredientId": 2, "quantity": 9999, "completed": true}', '{"ingredientId": 1, "quantity": 6, "completed": false}']::JSON[]
+//WHERE listId = 1;
 
 export const getDishes = async (request: Request, response: Response) => {
     const time = request.query.time ?? null;
@@ -80,6 +85,7 @@ export const getDishes = async (request: Request, response: Response) => {
     `, [time, cuisines, dietRestrictions],
     //NOTE: why does $3 work when LIKE instead of NOT LIKE?
     //NOTE: what of multiple cuisines/dietRestrictions?
+    //NOTE: wildcard needed?
         (queryError, results) => {
             if (queryError) {
                 console.error("getDishes", queryError);
@@ -129,6 +135,10 @@ export const getSavedDishes = async (request: Request, response: Response) => {
     );
 };
 
+//-- PUT /savedDishes/:userId body={ dishId: number, action: "removal" | "addition" } = same as other PUT incase deletion
+//-- DONE
+//UPDATE users
+//SET savedDishes = '{1,2,4,100}'
 export const getSearchFilters = async (request: Request, response: Response) => {
     const filter = request.query.filter;
 
