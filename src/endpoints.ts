@@ -98,13 +98,13 @@ export const getDishes = async (request: Request, response: Response) => {
         SELECT
             d.dishId AS "dishId",
             d.title,
-            d.picture,
+            d.picture AS "dishPicture",
             d.cuisines,
             d.dietRestrictions AS "dietRestrictions",
             d.time,
             u.name,
             u.location,
-            u.picture
+            u.picture AS "userPicture"
         FROM dishes d
         INNER JOIN users u ON d.userId = u.userId
         WHERE ($1::INTEGER IS NULL OR d.time <= $1)
