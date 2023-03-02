@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import {
     getList,
     putList,
+    getDish,
     getDishes,
     getSavedDishes,
     putSavedDishes,
@@ -22,6 +23,7 @@ const PORT = process.env.BACKEND_PORT;
 
 app.get("/lists/:userId", getList);
 app.put("/lists/:userId", putList);
+app.get("/dishes/:dishId", getDish);
 app.get("/dishes", getDishes);
 app.get("/savedDishes/:userId", getSavedDishes);
 app.put("/savedDishes/:userId", putSavedDishes);
