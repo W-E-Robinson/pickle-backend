@@ -99,9 +99,6 @@ export const getDishes = async (request: Request, response: Response) => {
             d.dishId AS "dishId",
             d.title,
             d.picture AS "dishPicture",
-            d.cuisines,
-            d.dietRestrictions AS "dietRestrictions",
-            d.time,
             u.name,
             u.location,
             u.picture AS "userPicture"
@@ -135,9 +132,6 @@ export const getSavedDishes = async (request: Request, response: Response) => {
         	sub.dishId AS "dishId",
         	d.title,
             d.picture,
-            d.cuisines,
-            d.dietRestrictions AS "dietRestrictions",
-            d.time,
             u.name,
             u.location,
             u.picture
