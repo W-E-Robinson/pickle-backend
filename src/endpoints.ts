@@ -89,6 +89,39 @@ export const putList = async (request: Request, response: Response) => {
     );
 };
 
+export const getDish = async (request: Request, response: Response) => {
+    const dishId = request.query.dishId;
+
+    pool.query(`
+        SELECT
+            d.dishId AS "dishId",
+            d.title,
+            d.picture AS "dishPicture",
+            d.description,
+            d.cuisines,
+            d.dietRestrictions,
+            d.time,
+            d.ingredients,
+            d.method,
+            u.name,
+            u.location,
+            u.picture AS "userPicture"
+        FROM dishes d
+        INNER JOIN users u ON d.userId = u.userId
+        WHERE d.dishId = $1;
+    `, [dishId],
+        (queryError, results) => {
+            if (queryError) {
+                console.error("getDish", queryError);
+                response.status(500).json({ message: "500 Internal Server Error." });
+            } else {
+                console.log("getDish", results);
+                response.status(200).json({ message: "Completed Successfully.", data: results.rows });
+            }
+        },
+    );
+};
+
 export const getDishes = async (request: Request, response: Response) => {
     const time = request.query.time ?? null;
     const cuisines = request.query.cuisines ?? null;
@@ -99,9 +132,6 @@ export const getDishes = async (request: Request, response: Response) => {
             d.dishId AS "dishId",
             d.title,
             d.picture AS "dishPicture",
-            d.cuisines,
-            d.dietRestrictions AS "dietRestrictions",
-            d.time,
             u.name,
             u.location,
             u.picture AS "userPicture"
@@ -135,9 +165,6 @@ export const getSavedDishes = async (request: Request, response: Response) => {
         	sub.dishId AS "dishId",
         	d.title,
             d.picture,
-            d.cuisines,
-            d.dietRestrictions AS "dietRestrictions",
-            d.time,
             u.name,
             u.location,
             u.picture
