@@ -99,7 +99,7 @@ export const getDish = async (request: Request, response: Response) => {
             d.picture AS "dishPicture",
             d.description,
             d.cuisines,
-            d.dietRestrictions,
+            d.dietRestrictions AS "dietRestrictions",
             d.time,
             d.ingredients,
             d.method,
