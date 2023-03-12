@@ -90,7 +90,7 @@ export const putList = async (request: Request, response: Response) => {
 };
 
 export const getDish = async (request: Request, response: Response) => {
-    const dishId = request.query.dishId;
+    const dishId = request.params.dishId;
 
     pool.query(`
         SELECT
