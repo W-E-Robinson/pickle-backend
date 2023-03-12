@@ -164,10 +164,10 @@ export const getSavedDishes = async (request: Request, response: Response) => {
         SELECT
         	sub.dishId AS "dishId",
         	d.title,
-            d.picture,
+            d.picture AS "dishPicture",
             u.name,
             u.location,
-            u.picture
+            u.picture AS "userPicture"
         FROM
         (
         	SELECT
